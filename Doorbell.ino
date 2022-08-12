@@ -41,7 +41,7 @@ void error_indicator(int error) {
   // create an infinite loop
   while(1) {
 
-    // iterate 0 to error to create the LED visual indication of errror
+    // iterate 0 to error to create the LED visual indication of error
     for(int i=0; i<error; ++i) {
       digitalWrite(LED_STATUS_PIN, HIGH);
       delay(500);
@@ -56,8 +56,6 @@ void error_indicator(int error) {
 
 // read pir state - update characteristic as required
 void managePIR() {
-
-  // Serial.println("Managing PIR");
 
   static int previousPirState = LOW;
 
@@ -82,11 +80,6 @@ void setBatteryCharacteristicValue() {
   // get the state of charge
   unsigned int soc = lipo.soc();
 
-  //Serial.print("Setting battery value: ");
-  //Serial.print(soc);
-  //Serial.print(" or in char ");
-  //Serial.println((char)(soc));
-
   // set the characteristic
   batteryCharacteristic.writeValue((char)(0xFF & soc));
 }
@@ -94,8 +87,6 @@ void setBatteryCharacteristicValue() {
 // manage the battery - read when readBatteryrequired is true
 void manageBattery() {
 
-  //Serial.println("managing battery");
-  
   // read the GPOUT value
   if (readBatteryRequired) {
 
@@ -110,14 +101,10 @@ void manageBattery() {
 // setup ble
 void setup_ble() {
   
-  //Serial.println("Initialising BLE");
   // initialise BLE
   if (!BLE.begin()) {
-    //Serial.println("Starting BLE failed!");
     error_indicator(BLE_ERROR);
   }
-
-  //Serial.println("BLE Initialised");
 
   // set the local name for advertising packets
   BLE.setLocalName("Doorbell");
@@ -143,8 +130,6 @@ void setup_ble() {
 
 void setup_battery_monitoring() {
 
-  //Serial.println("Setting up battery monitoring");
-
   // Set the GPOUT pin as an input w/ pullup
   pinMode(GPOUT_PIN, INPUT_PULLUP);
   
@@ -153,12 +138,8 @@ void setup_battery_monitoring() {
   if (!lipo.begin()) // begin() will return true if communication is successful
   {
     // If communication fails, print an error message and loop forever.
-//    Serial.println("Error: Unable to communicate with BQ27441.");
-//    Serial.println("  Check wiring and try again.");
-//    Serial.println("  (Battery must be plugged into Battery Babysitter!)");
     error_indicator(LIPO_ERROR);
   }
-  //Serial.println("Connected to BQ27441!");
 
   // To configure the values below, you must be in config mode
   lipo.enterConfig();
@@ -188,10 +169,6 @@ void setup() {
   // initialise the LED_STATUS_PIN
   digitalWrite(LED_STATUS_PIN, HIGH);
 
-  // initialise the serial monitor
-  //Serial.begin(9600);
-  //Serial.println("Seial port initialised - continuing setup");
-
   // set up the battery monitoring
   setup_battery_monitoring();
 
@@ -204,8 +181,6 @@ void setup() {
   // start advertising
   BLE.advertise();
 
-  //Serial.println("Bluetooth device active, waiting for connections...");
-
   digitalWrite(LED_STATUS_PIN, LOW);
 }
 
@@ -216,10 +191,6 @@ void loop() {
 
   // if a central is connected to the peripheral:
   if (central) {
-
-    // write connected address to serial
-    //Serial.print("Connected to central: ");
-    //Serial.println(central.address());
 
     // stop advertising
     BLE.stopAdvertise();
@@ -237,10 +208,6 @@ void loop() {
       // delay for 200ms
       delay(200);
     }
-
-    // write disconnected address to serial
-    //Serial.print("Disconnected from central: ");
-    //Serial.println(central.address());
 
     // disconnected should start advertising again
     BLE.advertise();
